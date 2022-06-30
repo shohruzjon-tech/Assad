@@ -8,11 +8,16 @@ import {
   SvgIcon,
   Typography
 } from '@mui/material';
-import { Download as DownloadIcon } from '../../icons/download';
+import { useState } from 'react';
 import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
+import AddModal from '../product-add';
 
-export const ProductListToolbar = (props) => (
+export const ProductListToolbar = (props) => {
+
+  const [modal, setModal] = useState(false);
+  
+  return (
   <Box {...props}>
     <Box
       sx={{
@@ -27,26 +32,16 @@ export const ProductListToolbar = (props) => (
         sx={{ m: 1 }}
         variant="h4"
       >
-        Products
+        Mahsulotlar
       </Typography>
       <Box sx={{ m: 1 }}>
-        <Button
-          startIcon={(<UploadIcon fontSize="small" />)}
-          sx={{ mr: 1 }}
-        >
-          Import
-        </Button>
-        <Button
-          startIcon={(<DownloadIcon fontSize="small" />)}
-          sx={{ mr: 1 }}
-        >
-          Export
-        </Button>
+        <AddModal open={modal} handleModal={setModal}/>
         <Button
           color="primary"
           variant="contained"
+          onClick={()=>setModal(!modal)}
         >
-          Add products
+          Mahsulot Qo'shish
         </Button>
       </Box>
     </Box>
@@ -68,7 +63,7 @@ export const ProductListToolbar = (props) => (
                   </InputAdornment>
                 )
               }}
-              placeholder="Search product"
+              placeholder="Mahsulotni qidirish"
               variant="outlined"
             />
           </Box>
@@ -76,4 +71,4 @@ export const ProductListToolbar = (props) => (
       </Card>
     </Box>
   </Box>
-);
+)};

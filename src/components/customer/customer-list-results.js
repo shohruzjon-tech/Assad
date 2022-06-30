@@ -81,19 +81,19 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                   />
                 </TableCell>
                 <TableCell>
-                  Name
+                  Ism
                 </TableCell>
                 <TableCell>
-                  Email
+                  Elektron pochta
                 </TableCell>
                 <TableCell>
-                  Location
+                  Manzil
                 </TableCell>
                 <TableCell>
-                  Phone
+                  Telefon raqam
                 </TableCell>
                 <TableCell>
-                  Registration date
+                  Qo'shilgan vaqt
                 </TableCell>
               </TableRow>
             </TableHead>

@@ -12,17 +12,29 @@ import {
 
 const states = [
   {
-    value: 'alabama',
-    label: 'Alabama'
+    value: 'Qashqadaryo',
+    label: 'Qashqadaryo'
   },
   {
-    value: 'new-york',
-    label: 'New York'
+    value: 'Toshkent shahar',
+    label: 'Toshkent shahar'
   },
   {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  }
+    value: 'Toshkent viloyati',
+    label: 'Toshkent viloyati'
+  },
+  {
+    value: 'Andijon',
+    label: 'Andijon'
+  },
+  {
+    value: 'Namangan',
+    label: 'Namangan'
+  },
+  {
+    value: 'Samarqand',
+    label: 'Samarqand'
+  },
 ];
 
 export const AccountProfileDetails = (props) => {
@@ -50,8 +62,8 @@ export const AccountProfileDetails = (props) => {
     >
       <Card>
         <CardHeader
-          subheader="The information can be edited"
-          title="Profile"
+          subheader="Malumotni o'zgartirish mumkin"
+          title="Profil"
         />
         <Divider />
         <CardContent>
@@ -66,8 +78,7 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                helperText="Please specify the first name"
-                label="First name"
+                label="Ism"
                 name="firstName"
                 onChange={handleChange}
                 required
@@ -82,7 +93,7 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                label="Last name"
+                label="Familiya"
                 name="lastName"
                 onChange={handleChange}
                 required
@@ -97,7 +108,7 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                label="Email Address"
+                label="Elektron pochta"
                 name="email"
                 onChange={handleChange}
                 required
@@ -112,7 +123,7 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                label="Phone Number"
+                label="Telefon raqam"
                 name="phone"
                 onChange={handleChange}
                 type="number"
@@ -127,7 +138,7 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                label="Country"
+                label="Davlat"
                 name="country"
                 onChange={handleChange}
                 required
@@ -142,7 +153,7 @@ export const AccountProfileDetails = (props) => {
             >
               <TextField
                 fullWidth
-                label="Select State"
+                label="Viloyat tanlang"
                 name="state"
                 onChange={handleChange}
                 required
@@ -175,7 +186,7 @@ export const AccountProfileDetails = (props) => {
             color="primary"
             variant="contained"
           >
-            Save details
+           O'zgarishlarni saqlash
           </Button>
         </Box>
       </Card>

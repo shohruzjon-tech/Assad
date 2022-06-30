@@ -3,41 +3,53 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
+import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Facebook as FacebookIcon } from '../icons/facebook';
-import { Google as GoogleIcon } from '../icons/google';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth }  from '../services/firebase';
+import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/user-redux/user.slice';
 
 const Login = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
-      email: 'demo@devias.io',
-      password: 'Password123'
+      email: '',
+      password: ''
     },
     validationSchema: Yup.object({
       email: Yup
         .string()
         .email(
-          'Must be a valid email')
+          'Login Elektron pochta shaklida kiritiladi!')
         .max(255)
         .required(
-          'Email is required'),
+          'Login kiritilishi shart!'),
       password: Yup
         .string()
         .max(255)
         .required(
-          'Password is required')
+          'Parol kiritilishi shart!')
     }),
-    onSubmit: () => {
-      router.push('/');
+    onSubmit: (values) => {
+      signInWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        dispatch(setUser(user));
+        router.push('/');
+      })
+      .catch((error) => {
+        toast.error('Parol yoki Login xato!');
+      });
     }
   });
 
   return (
     <>
       <Head>
-        <title>Login | Material Kit</title>
+        <title>Xaridor.uz | Login</title>
       </Head>
       <Box
         component="main"
@@ -57,7 +69,7 @@ const Login = () => {
               component="a"
               startIcon={<ArrowBackIcon fontSize="small" />}
             >
-              Dashboard
+              Bosh sahifa
             </Button>
           </NextLink>
           <form onSubmit={formik.handleSubmit}>
@@ -66,53 +78,9 @@ const Login = () => {
                 color="textPrimary"
                 variant="h4"
               >
-                Sign in
-              </Typography>
-              <Typography
-                color="textSecondary"
-                gutterBottom
-                variant="body2"
-              >
-                Sign in on the internal platform
+                Kirish
               </Typography>
             </Box>
-            <Grid
-              container
-              spacing={3}
-            >
-              <Grid
-                item
-                xs={12}
-                md={6}
-              >
-                <Button
-                  color="info"
-                  fullWidth
-                  startIcon={<FacebookIcon />}
-                  onClick={formik.handleSubmit}
-                  size="large"
-                  variant="contained"
-                >
-                  Login with Facebook
-                </Button>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                md={6}
-              >
-                <Button
-                  fullWidth
-                  color="error"
-                  startIcon={<GoogleIcon />}
-                  onClick={formik.handleSubmit}
-                  size="large"
-                  variant="contained"
-                >
-                  Login with Google
-                </Button>
-              </Grid>
-            </Grid>
             <Box
               sx={{
                 pb: 1,
@@ -124,14 +92,14 @@ const Login = () => {
                 color="textSecondary"
                 variant="body1"
               >
-                or login with email address
+                Login va parol orqali kirish
               </Typography>
             </Box>
             <TextField
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
               helperText={formik.touched.email && formik.errors.email}
-              label="Email Address"
+              label="Login"
               margin="normal"
               name="email"
               onBlur={formik.handleBlur}
@@ -144,7 +112,7 @@ const Login = () => {
               error={Boolean(formik.touched.password && formik.errors.password)}
               fullWidth
               helperText={formik.touched.password && formik.errors.password}
-              label="Password"
+              label="Parol"
               margin="normal"
               name="password"
               onBlur={formik.handleBlur}
@@ -156,36 +124,14 @@ const Login = () => {
             <Box sx={{ py: 2 }}>
               <Button
                 color="primary"
-                disabled={formik.isSubmitting}
                 fullWidth
                 size="large"
                 type="submit"
                 variant="contained"
               >
-                Sign In Now
+                KIRISH
               </Button>
             </Box>
-            <Typography
-              color="textSecondary"
-              variant="body2"
-            >
-              Don&apos;t have an account?
-              {' '}
-              <NextLink
-                href="/register"
-              >
-                <Link
-                  to="/register"
-                  variant="subtitle2"
-                  underline="hover"
-                  sx={{
-                    cursor: 'pointer'
-                  }}
-                >
-                  Sign Up
-                </Link>
-              </NextLink>
-            </Typography>
           </form>
         </Container>
       </Box>

@@ -64,7 +64,7 @@ export const AccountProfile = (props) => (
         fullWidth
         variant="text"
       >
-        Upload picture
+        Surat yuklash
       </Button>
     </CardActions>
   </Card>

@@ -1,29 +1,14 @@
 import Head from 'next/head';
-import { Box, Container, Grid } from '@mui/material';
-import { ProductListToolbar } from '../components/product/product-list-toolbar';
+import { Box, Container, Grid, Pagination } from '@mui/material';
+import { products } from '../__mocks__/products';
 import { ProductCard } from '../components/product/product-card';
 import { DashboardLayout } from '../components/dashboard-layout';
-import { useSelector, useDispatch }  from 'react-redux';
-import { useEffect } from 'react';
-import { getProducts } from '../redux/product-redux/product.slice';
-import GlobalLoader from '../components/global-loader';
 
-const Products = () => {
-  const dispatch = useDispatch();
-  const products = useSelector((state)=>state.product.products);
-  const isLoading = useSelector(state=>state.product.isLoading);
-
-  useEffect(()=>{
-    dispatch(getProducts());
-   }, [dispatch])
-  
-  if(isLoading) return <GlobalLoader/>
-
-  return (
+const Orders = () => (
   <>
     <Head>
       <title>
-        Mahsulotlar | Xaridor.uz
+        Buyurtmalar | Xaridor.uz
       </title>
     </Head>
     <Box
@@ -34,7 +19,6 @@ const Products = () => {
       }}
     >
       <Container maxWidth={false}>
-        <ProductListToolbar />
         <Box sx={{ pt: 3 }}>
           <Grid
             container
@@ -43,7 +27,7 @@ const Products = () => {
             {products.map((product) => (
               <Grid
                 item
-                key={product._id}
+                key={product.id}
                 lg={4}
                 md={6}
                 xs={12}
@@ -63,13 +47,13 @@ const Products = () => {
         </Box>
       </Container>
     </Box>
-  </>)
-};
+  </>
+);
 
-Products.getLayout = (page) => (
+Orders.getLayout = (page) => (
   <DashboardLayout>
     {page}
   </DashboardLayout>
 );
 
-export default Products;
+export default Orders;
