@@ -2,10 +2,24 @@ import PropTypes from 'prop-types';
 import { Button, Box, Card, CardContent, Divider, Grid, Typography, Stack } from '@mui/material';
 import EditModal from '../product-edit';
 import { useState } from 'react';
+import { doc, deleteDoc } from "firebase/firestore";
+import { db } from '../../services/firebase';
+import { toast } from 'react-toastify';
 
 export const ProductCard = ({ product, ...rest }) => {
   
   const [editModal, setEdit] = useState(false);
+
+  const deleteProduct = () =>{
+    toast.promise(
+      deleteDoc(doc(db, "products", product?._id)),
+      {
+        pending: "O'chirilyapti",
+        success: "O'chirildi!",
+        error: 'Jarayon bekor qilindi',
+      }
+  );
+  };
   
   return (
   <Card
@@ -45,7 +59,7 @@ export const ProductCard = ({ product, ...rest }) => {
         gutterBottom
         variant="h6"
       >
-        213,000 so'm
+       {product?.price.toLocaleString()} so'm
       </Typography>
       </Stack>
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
@@ -63,7 +77,7 @@ export const ProductCard = ({ product, ...rest }) => {
         gutterBottom
         variant="h6"
       >
-        213,000 so'm
+         {product?.admin.toLocaleString()} so'm
       </Typography>
       </Stack>
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
@@ -81,7 +95,7 @@ export const ProductCard = ({ product, ...rest }) => {
         gutterBottom
         variant="h6"
       >
-        Bolalar
+         {product?.category}
       </Typography>
       </Stack>
     </CardContent>
@@ -110,7 +124,7 @@ export const ProductCard = ({ product, ...rest }) => {
             display: 'flex'
           }}
         >
-          <Button variant='contained' color='error'>O'chirish</Button>
+          <Button onClick={deleteProduct} variant='contained' color='error'>O'chirish</Button>
         </Grid>
       </Grid>
     </Box>

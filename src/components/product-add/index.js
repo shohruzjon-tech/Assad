@@ -5,6 +5,12 @@ import  {TextField, Grid, Divider, Button, Stack }  from '@mui/material';
 import Modal from '@mui/material/Modal';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { postOrder } from 'src/redux/order-redux/order.slice';
+import { useDispatch, useSelector } from 'react-redux';
+import { storage } from '../../services/firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import GlobalLoader from '../global-loader';
+import { getProducts } from '../../redux/product-redux/product.slice';
 
 const style = {
   position: 'absolute',
@@ -16,11 +22,13 @@ const style = {
 };
 
 export default function AddModal({ open, handleModal }) {
-
+   const dispatch = useDispatch();
+   const isLoading = useSelector(state=>state.order.isLoading);
    const fileRef = useRef('');
    const [imagesList, setImages] = useState([]);
+   const [reference, setRefer] = useState(undefined);
 
-    const { handleChange, values } = useFormik({
+    const { handleChange, values, errors, touched, handleSubmit } = useFormik({
         initialValues: {
          name: '',
          price: '',
@@ -36,12 +44,70 @@ export default function AddModal({ open, handleModal }) {
           description: Yup.string().required('Mahsulot haqida malumot kiritilishi kerak!'),
         }),
         onSubmit: (values) => {
-          
+          dispatch(postOrder({
+            ...values,
+            _id: Date.now().toString(),
+            images: imagesList,
+          }));
+
+          dispatch(getProducts());
         }
       });
+   
 
-      console.log(imagesList);
+      function ImageUploader (file){
+        // Create the file metadata
+        /** @type {any} */
+          const metadata = {
+            contentType: 'image/png'
+          };
+      
+        // Upload file and metadata to the object 'images/mountains.jpg'
+        const storageRef = ref(storage, 'images/' + file.name);
+        const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+              case 'paused':
+                console.log('Upload is paused');
+                break;
+              case 'running':
+                console.log('Upload is running');
+                break;
+            }
+          }, 
+          (error) => {
+            // A full list of error codes is available at
+            // https://firebase.google.com/docs/storage/web/handle-errors
+            console.log(error);
+            switch (error.code) {
+              case 'storage/unauthorized':
+                // User doesn't have permission to access the object
+                break;
+              case 'storage/canceled':
+                // User canceled the upload
+                break;
+      
+              // ...
+      
+              case 'storage/unknown':
+                // Unknown error occurred, inspect error.serverResponse
+                break;
+            }
+          }, 
+          () => {
+            // Upload completed successfully, now we can get the download URL
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+               setImages([downloadURL]);
+            });
+          }
+        );
+      };
 
+  if(isLoading) return <GlobalLoader/>;
    
   return (
       <Modal
@@ -81,6 +147,8 @@ export default function AddModal({ open, handleModal }) {
                     required
                     value={values.name}
                     variant="outlined"
+                    error={Boolean(touched.name && errors.name)}
+                    helperText={touched.name && errors.name}
                 />
                 </Grid>
                 <Grid
@@ -97,6 +165,8 @@ export default function AddModal({ open, handleModal }) {
                     variant="outlined"
                     multiline
                     rows={8}
+                    error={Boolean(touched.description && errors.description)}
+                    helperText={touched.description && errors.description}
                 />
                 </Grid>
                 <Grid
@@ -104,7 +174,18 @@ export default function AddModal({ open, handleModal }) {
                 xs={12}
                 >
                 <Stack>
-                  <input type='file' multiple ref={fileRef} style={{display: 'none'}} onChange={(e)=>setImages(e.target.value)}/>
+                  <input 
+                    type='file' 
+                    accept="image/png, image/jpg, image/jpeg, image/webp" 
+                    ref={fileRef} 
+                    style={{display: 'none'}} 
+                    onChange={(e)=>{
+                      if(e.target.files[0]){
+                        ImageUploader(e.target.files[0]);
+                        setRefer(URL.createObjectURL(e.target.files[0]))
+                      }
+                    }}
+                    />
                   <Box
                    sx={{
                     width: '90%',
@@ -125,6 +206,17 @@ export default function AddModal({ open, handleModal }) {
                      width='100px'
                    />
                   </Box>
+                  <Stack>
+                    {
+                      reference?
+                      <Box
+                      component='img'
+                      src={reference}
+                      alt='uploaded image'
+                      width='100px'
+                    />:undefined
+                    }
+                  </Stack>
                 </Stack>
                 </Grid>
                 <Grid
@@ -140,6 +232,8 @@ export default function AddModal({ open, handleModal }) {
                     required
                     value={values.price}
                     variant="outlined"
+                    error={Boolean(touched.price && errors.price)}
+                    helperText={touched.price && errors.price}
                 />
                 </Grid>
                 <Grid
@@ -154,6 +248,8 @@ export default function AddModal({ open, handleModal }) {
                     type="number"
                     value={values.admin}
                     variant="outlined"
+                    error={Boolean(touched.admin && errors.admin)}
+                    helperText={touched.admin && errors.admin}
                 />
                 </Grid>
                 <Grid
@@ -162,12 +258,14 @@ export default function AddModal({ open, handleModal }) {
                 >
                 <TextField
                     fullWidth
-                    label="Admin to'lovi"
-                    name="admin"
+                    label="Mahsulot kategoriyasi"
+                    name="category"
                     onChange={handleChange}
                     type="number"
-                    value={values.admin}
+                    value={values.category}
                     variant="outlined"
+                    error={Boolean(touched.category && errors.category)}
+                    helperText={touched.category && errors.category}
                 />
                 </Grid>
             </Grid>
@@ -182,8 +280,9 @@ export default function AddModal({ open, handleModal }) {
             <Button
                 color="primary"
                 variant="contained"
+                onClick={handleSubmit}
             >
-            O'zgarishlarni saqlash
+             Mahsulotni qo'shish
             </Button>
             </Box>
         </form>

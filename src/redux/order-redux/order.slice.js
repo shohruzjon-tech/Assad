@@ -9,7 +9,7 @@ const initialState ={
 };
 
 export const postOrder = createAsyncThunk('orders/post', async (order)=>{
-    return setDoc(doc(db, "orders-list", order?.order_id), order);
+    return setDoc(doc(db, "products", order?._id), order);
 });
 
 export const ordersSlice = createSlice({

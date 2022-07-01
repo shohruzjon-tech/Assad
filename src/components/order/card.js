@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { Button, Box, Card, CardContent, Divider, Grid, Typography, Stack } from '@mui/material';
 import EditModal from '../product-edit';
 import { useState } from 'react';
-
 export const OrderCard = ({ order, ...rest }) => {
   
   const [editModal, setEdit] = useState(false);
@@ -26,7 +25,7 @@ export const OrderCard = ({ order, ...rest }) => {
       >
        <Box
         component='img'
-        src={product?.images[0]}
+        src={order?.image}
         height='300px'
        />
       </Box>
@@ -35,9 +34,9 @@ export const OrderCard = ({ order, ...rest }) => {
         align="center"
         color="textPrimary"
         gutterBottom
-        variant="h6"
+        variant="body1"
       >
-        {product.name}
+        Mahsulot nomi
       </Typography>
       <Typography
         align="center"
@@ -45,25 +44,7 @@ export const OrderCard = ({ order, ...rest }) => {
         gutterBottom
         variant="h6"
       >
-        213,000 so'm
-      </Typography>
-      </Stack>
-      <Stack direction='row' alignItems='center' justifyContent='space-between'>
-      <Typography
-        align="center"
-        color="textPrimary"
-        gutterBottom
-        variant="h6"
-      >
-        Admin to'lovi
-      </Typography>
-      <Typography
-        align="center"
-        color="textPrimary"
-        gutterBottom
-        variant="h6"
-      >
-        213,000 so'm
+        {order?.product_name}
       </Typography>
       </Stack>
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
@@ -71,9 +52,9 @@ export const OrderCard = ({ order, ...rest }) => {
         align="center"
         color="textPrimary"
         gutterBottom
-        variant="h6"
+        variant="body1"
       >
-        Kategoriyasi
+        Mahsulot Narxi
       </Typography>
       <Typography
         align="center"
@@ -81,7 +62,43 @@ export const OrderCard = ({ order, ...rest }) => {
         gutterBottom
         variant="h6"
       >
-        Bolalar
+       {order?.product_price?.toLocaleString()} so'm
+      </Typography>
+      </Stack>
+      <Stack direction='row' alignItems='center' justifyContent='space-between'>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="body1"
+      >
+        Buyurtmachi ismi
+      </Typography>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="h6"
+      >
+        {order?.customer_name}
+      </Typography>
+      </Stack>
+      <Stack direction='row' alignItems='center' justifyContent='space-between'>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="body1"
+      >
+        Buyurtmachi telefon raqami
+      </Typography>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="h6"
+      >
+        {order?.customer_phone}
       </Typography>
       </Stack>
     </CardContent>
@@ -101,7 +118,7 @@ export const OrderCard = ({ order, ...rest }) => {
           }}
         >
          <EditModal open={editModal} handleChange={setEdit}/>
-         <Button onClick={()=>setEdit(true)} variant='contained'>O'zgartirish</Button>
+         <Button onClick={()=>setEdit(true)} variant='contained'>Tahrirlash</Button>
         </Grid>
         <Grid
           item
@@ -110,7 +127,6 @@ export const OrderCard = ({ order, ...rest }) => {
             display: 'flex'
           }}
         >
-          <Button variant='contained' color='error'>O'chirish</Button>
         </Grid>
       </Grid>
     </Box>
