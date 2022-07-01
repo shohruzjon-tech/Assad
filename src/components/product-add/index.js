@@ -1,48 +1,46 @@
-import * as React from 'react';
+import React, { useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import  { Card, TextField, CardHeader, Grid, Divider, CardContent, Button }  from '@mui/material';
+import  {TextField, Grid, Divider, Button, Stack }  from '@mui/material';
 import Modal from '@mui/material/Modal';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 const style = {
   position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: {xs: '100%', lg: 700},
   bgcolor: 'background.paper',
-  border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
+  p: {xs: 1, lg: 4},
+  overflowY: 'auto',
 };
 
 export default function AddModal({ open, handleModal }) {
 
+   const fileRef = useRef('');
+   const [imagesList, setImages] = useState([]);
+
     const { handleChange, values } = useFormik({
         initialValues: {
-          email: '',
-          password: ''
+         name: '',
+         price: '',
+         admin: '',
+         category: '',
+         description: '',
         },
         validationSchema: Yup.object({
-          email: Yup
-            .string()
-            .email(
-              'Login Elektron pochta shaklida kiritiladi!')
-            .max(255)
-            .required(
-              'Login kiritilishi shart!'),
-          password: Yup
-            .string()
-            .max(255)
-            .required(
-              'Parol kiritilishi shart!')
+          name: Yup.string().required('Mahsulot nomi kiritilishi shart!'),
+          price: Yup.number().required('Mahsulot narxi kiritilishi shart!'),
+          admin: Yup.number().required('Mahsulot uchun admin tulovini kiriting!'),
+          category: Yup.string().required('Kategoriya aniq emas!'),
+          description: Yup.string().required('Mahsulot haqida malumot kiritilishi kerak!'),
         }),
         onSubmit: (values) => {
           
         }
       });
+
+      console.log(imagesList);
 
    
   return (
@@ -51,100 +49,128 @@ export default function AddModal({ open, handleModal }) {
         onClose={()=>handleModal(!open)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        sx={{
+          overflowY: 'auto',
+          height: '100vh',
+          pt: 50,
+          pb: 4,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
         <Box sx={style}>
+          <Typography variant="h5" sx={{margin: '15px 0'}}>Mahsulot qo'shish</Typography>
         <form
         autoComplete="off"
         noValidate
         >
-        <Card>
-            <CardHeader
-            subheader="Malumotni o'zgartirish mumkin"
-            title="Profil"
-            />
-            <Divider />
-            <CardContent>
             <Grid
                 container
                 spacing={3}
             >
                 <Grid
                 item
-                md={6}
                 xs={12}
                 >
                 <TextField
                     fullWidth
-                    label="Ism"
-                    name="firstName"
+                    label="Mahsulot nomi"
+                    name="name"
                     onChange={handleChange}
                     required
-                    value={values.firstName}
+                    value={values.name}
                     variant="outlined"
                 />
                 </Grid>
                 <Grid
                 item
-                md={6}
                 xs={12}
                 >
                 <TextField
                     fullWidth
-                    label="Familiya"
-                    name="lastName"
+                    label="Mahsulot haqida"
+                    name="description"
                     onChange={handleChange}
                     required
-                    value={values.lastName}
+                    value={values.description}
+                    variant="outlined"
+                    multiline
+                    rows={8}
+                />
+                </Grid>
+                <Grid
+                item
+                xs={12}
+                >
+                <Stack>
+                  <input type='file' multiple ref={fileRef} style={{display: 'none'}} onChange={(e)=>setImages(e.target.value)}/>
+                  <Box
+                   sx={{
+                    width: '90%',
+                    margin: '30px auto',
+                    padding: '40px 0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor:  'pointer',
+                    background: 'gray',
+                   }}
+                   onClick={()=>fileRef.current.click()}
+                  >
+                   <Box
+                     component='img'
+                     src='/static/upload.png'
+                     alt='file upload'
+                     width='100px'
+                   />
+                  </Box>
+                </Stack>
+                </Grid>
+                <Grid
+                item
+                xs={12}
+                >
+                <TextField
+                    fullWidth
+                    label="Mahsulot narxi"
+                    name="price"
+                    type="number"
+                    onChange={handleChange}
+                    required
+                    value={values.price}
                     variant="outlined"
                 />
                 </Grid>
                 <Grid
                 item
-                md={6}
                 xs={12}
                 >
                 <TextField
                     fullWidth
-                    label="Elektron pochta"
-                    name="email"
-                    onChange={handleChange}
-                    required
-                    value={values.email}
-                    variant="outlined"
-                />
-                </Grid>
-                <Grid
-                item
-                md={6}
-                xs={12}
-                >
-                <TextField
-                    fullWidth
-                    label="Telefon raqam"
-                    name="phone"
+                    label="Admin to'lovi"
+                    name="admin"
                     onChange={handleChange}
                     type="number"
-                    value={values.phone}
+                    value={values.admin}
                     variant="outlined"
                 />
                 </Grid>
                 <Grid
                 item
-                md={6}
                 xs={12}
                 >
                 <TextField
                     fullWidth
-                    label="Davlat"
-                    name="country"
+                    label="Admin to'lovi"
+                    name="admin"
                     onChange={handleChange}
-                    required
-                    value={values.country}
+                    type="number"
+                    value={values.admin}
                     variant="outlined"
                 />
                 </Grid>
             </Grid>
-            </CardContent>
             <Divider />
             <Box
             sx={{
@@ -160,7 +186,6 @@ export default function AddModal({ open, handleModal }) {
             O'zgarishlarni saqlash
             </Button>
             </Box>
-        </Card>
         </form>
         </Box>
       </Modal>
