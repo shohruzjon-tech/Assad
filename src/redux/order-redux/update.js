@@ -8,33 +8,26 @@ const initialState ={
     isFulfilled: false,
 };
 
-export const postOrder = createAsyncThunk('orders/post', async (order)=>{
-    return setDoc(doc(db, "products", order?._id), order, {merge: true});
+export const updateOrder = createAsyncThunk('orders/put', async (order)=>{
+    return setDoc(doc(db, "orders-list", order?.order_id), order, {merge: true});
 });
 
-export const ordersSlice = createSlice({
-    name: 'post/orders',
+export const updateSlice = createSlice({
+    name: 'put/orders',
     initialState,
-    reducers:{
-        clearStatus: (state) => {
-              state.isFulfilled=false;
-          },
-    },
     extraReducers:{
-        [postOrder.pending]: (state, action) => {
+        [updateOrder.pending]: (state, action) => {
             state.isLoading=true;
         },
-        [postOrder.fulfilled]: (state, action) => {
+        [updateOrder.fulfilled]: (state, action) => {
             state.isLoading=false;
             state.isFulfilled=true;
         },
-        [postOrder.rejected]:(state, action) => {
+        [updateOrder.rejected]:(state, action) => {
             state.error='Malumotni yuklashda hatolik yuz berdi. Iltimos keyinroq urinib kuring!';
             state.isLoading=false;
         } 
     }
 });
 
-export const { clearStatus } = ordersSlice.actions;
-
-export default  ordersSlice.reducer;
+export default  updateSlice.reducer;

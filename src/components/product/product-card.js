@@ -5,14 +5,19 @@ import { useState } from 'react';
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from '../../services/firebase';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { getProducts } from '../../redux/product-redux/product.slice';
 
 export const ProductCard = ({ product, ...rest }) => {
   
   const [editModal, setEdit] = useState(false);
+  const dispatch = useDispatch();
 
   const deleteProduct = () =>{
     toast.promise(
-      deleteDoc(doc(db, "products", product?._id)),
+      deleteDoc(doc(db, "products", product?._id)).then(()=>{
+        dispatch(getProducts());
+      }),
       {
         pending: "O'chirilyapti",
         success: "O'chirildi!",
@@ -114,7 +119,7 @@ export const ProductCard = ({ product, ...rest }) => {
             display: 'flex'
           }}
         >
-         <EditModal open={editModal} handleChange={setEdit}/>
+         <EditModal open={editModal} handleModal={setEdit} order={product}/>
          <Button onClick={()=>setEdit(true)} variant='contained'>O'zgartirish</Button>
         </Grid>
         <Grid

@@ -7,11 +7,16 @@ import {
   InputAdornment,
   SvgIcon, Typography
 } from '@mui/material';
+import { useState } from 'react';
 import { Search as SearchIcon } from '../../icons/search';
-import { Upload as UploadIcon } from '../../icons/upload';
-import { Download as DownloadIcon } from '../../icons/download';
+import AdminModal from '../admin/admin';
 
-export const CustomerListToolbar = (props) => (
+export const CustomerListToolbar = (props) => {
+  
+   const [modal, setAdmin] = useState(false);
+   
+  
+  return (
   <Box {...props}>
     <Box
       sx={{
@@ -28,10 +33,12 @@ export const CustomerListToolbar = (props) => (
       >
         Telegram adminlar
       </Typography>
+      <AdminModal open={modal} handleModal={setAdmin}/>
       <Box sx={{ m: 1 }}>
         <Button
           color="primary"
           variant="contained"
+          onClick={()=>setAdmin(!modal)}
         >
           Admin qo'shish
         </Button>
@@ -55,7 +62,7 @@ export const CustomerListToolbar = (props) => (
                   </InputAdornment>
                 )
               }}
-              placeholder="Search customer"
+              placeholder="Adminlarni qidirish"
               variant="outlined"
             />
           </Box>
@@ -63,4 +70,4 @@ export const CustomerListToolbar = (props) => (
       </Card>
     </Box>
   </Box>
-);
+)};

@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import {
   Avatar,
@@ -16,17 +15,23 @@ import {
   Typography
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
+import { db } from '../../services/firebase';
+import { collection, onSnapshot } from "firebase/firestore";
+import GlobalLoader from '../global-loader';
+import { toast } from 'react-toastify';
 
-export const CustomerListResults = ({ customers, ...rest }) => {
+export const CustomerListResults = ({ ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
+  const [admins, setAdmin]=useState([]);
+  const [isLoading, setLoading]=useState(false);
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.id);
+      newSelectedCustomerIds = admins.map((customer) => customer._id);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -62,6 +67,26 @@ export const CustomerListResults = ({ customers, ...rest }) => {
     setPage(newPage);
   };
 
+  useEffect(()=>{
+    setLoading(true);
+    const unsubscribe = onSnapshot(collection(db, "telegram-admins"), (snapshot) => {
+         const arr =[];
+         snapshot?.forEach((doc)=>{
+          const data = doc.data();
+          arr.push(data);
+         });
+         setAdmin(arr);
+         setLoading(false);
+    },
+    (error) => {
+      setLoading(false);
+      toast.error('Xatolik yuzberdi!')
+    });
+   return ()=>unsubscribe();
+  }, [db])
+
+  if(isLoading) return <GlobalLoader/>
+
   return (
     <Card {...rest}>
       <PerfectScrollbar>
@@ -71,11 +96,11 @@ export const CustomerListResults = ({ customers, ...rest }) => {
               <TableRow>
                 <TableCell padding="checkbox">
                   <Checkbox
-                    checked={selectedCustomerIds.length === customers.length}
+                    checked={selectedCustomerIds.length === admins.length}
                     color="primary"
                     indeterminate={
                       selectedCustomerIds.length > 0
-                      && selectedCustomerIds.length < customers.length
+                      && selectedCustomerIds.length < admins.length
                     }
                     onChange={handleSelectAll}
                   />
@@ -93,12 +118,12 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                   Telefon raqam
                 </TableCell>
                 <TableCell>
-                  Qo'shilgan vaqt
+                  Maxfiy kalit
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {admins.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
                   key={customer.id}
@@ -136,13 +161,13 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                     {customer.email}
                   </TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                    {`${customer.city}, ${customer.region}`}
                   </TableCell>
                   <TableCell>
                     {customer.phone}
                   </TableCell>
                   <TableCell>
-                    {format(customer.createdAt, 'dd/MM/yyyy')}
+                    {customer.password}
                   </TableCell>
                 </TableRow>
               ))}
@@ -152,7 +177,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={customers.length}
+        count={admins.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}
@@ -161,8 +186,4 @@ export const CustomerListResults = ({ customers, ...rest }) => {
       />
     </Card>
   );
-};
-
-CustomerListResults.propTypes = {
-  customers: PropTypes.array.isRequired
 };

@@ -1,10 +1,27 @@
 import PropTypes from 'prop-types';
 import { Button, Box, Card, CardContent, Divider, Grid, Typography, Stack } from '@mui/material';
-import EditModal from '../product-edit';
+import EditModal from './edit';
 import { useState } from 'react';
+import { doc, deleteDoc, setDoc } from "firebase/firestore";
+import { db } from '../../services/firebase';
+import { toast } from 'react-toastify';
+
+
 export const OrderCard = ({ order, ...rest }) => {
   
   const [editModal, setEdit] = useState(false);
+
+  const archiveOrders = async ()=>{
+    toast.promise(
+      setDoc(doc(db, "order-archive", order?.order_id), order),
+      {
+        pending: "Arxivlanyapti...",
+        success: "Arxivlandi",
+        error: 'Jarayon bekor qilindi',
+      }
+    );
+    await deleteDoc(doc(db, "orders-list", order?.order_id));
+  };
   
   return (
   <Card
@@ -16,19 +33,6 @@ export const OrderCard = ({ order, ...rest }) => {
     {...rest}
   >
     <CardContent>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          pb: 3
-        }}
-      >
-       <Box
-        component='img'
-        src={order?.image}
-        height='300px'
-       />
-      </Box>
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
       <Typography
         align="center"
@@ -36,7 +40,7 @@ export const OrderCard = ({ order, ...rest }) => {
         gutterBottom
         variant="body1"
       >
-        Mahsulot nomi
+        Mahsulot
       </Typography>
       <Typography
         align="center"
@@ -54,7 +58,7 @@ export const OrderCard = ({ order, ...rest }) => {
         gutterBottom
         variant="body1"
       >
-        Mahsulot Narxi
+        Narxi
       </Typography>
       <Typography
         align="center"
@@ -72,7 +76,7 @@ export const OrderCard = ({ order, ...rest }) => {
         gutterBottom
         variant="body1"
       >
-        Buyurtmachi ismi
+        Buyurtmachi
       </Typography>
       <Typography
         align="center"
@@ -90,7 +94,7 @@ export const OrderCard = ({ order, ...rest }) => {
         gutterBottom
         variant="body1"
       >
-        Buyurtmachi telefon raqami
+        Tel
       </Typography>
       <Typography
         align="center"
@@ -99,6 +103,42 @@ export const OrderCard = ({ order, ...rest }) => {
         variant="h6"
       >
         {order?.customer_phone}
+      </Typography>
+      </Stack>
+      <Stack direction='row' alignItems='center' justifyContent='space-between'>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="body1"
+      >
+        Manzil
+      </Typography>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="h6"
+      >
+        {order?.customer_address}
+      </Typography>
+      </Stack>
+      <Stack direction='row' alignItems='center' justifyContent='space-between'>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="body1"
+      >
+        Qo'shimcha
+      </Typography>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="h6"
+      >
+        {order?.customer_info}
       </Typography>
       </Stack>
     </CardContent>
@@ -117,7 +157,7 @@ export const OrderCard = ({ order, ...rest }) => {
             display: 'flex'
           }}
         >
-         <EditModal open={editModal} handleChange={setEdit}/>
+         <EditModal open={editModal} handleModal={setEdit} order={order}/>
          <Button onClick={()=>setEdit(true)} variant='contained'>Tahrirlash</Button>
         </Grid>
         <Grid
@@ -127,6 +167,19 @@ export const OrderCard = ({ order, ...rest }) => {
             display: 'flex'
           }}
         >
+         <EditModal open={editModal} handleModal={setEdit} order={order}/>
+         <a href={`tel:${order?.customer_phone}`} style={{textDecoration: 'none'}}>
+         <Button  variant='contained' color='success'>Qo'ng'iroq</Button>
+         </a>
+        </Grid>
+        <Grid
+          item
+          sx={{
+            alignItems: 'center',
+            display: 'flex'
+          }}
+        >
+         <Button onClick={archiveOrders} variant='contained' color='warning'>Arxivlash</Button>
         </Grid>
       </Grid>
     </Box>

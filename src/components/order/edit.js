@@ -11,35 +11,25 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { postOrder } from '../../redux/order-redux/order.slice';
-import { getProducts } from '../../redux/product-redux/product.slice';
-
+import { updateOrder }  from '../../redux/order-redux/update';
 
 const statuses = [
     {
         _id: 1,
-        label: "Go'zallik va salomatlik"
+        label: 'yangi'
     },
     {
         _id: 2,
-        label: "Bolalar uchun"
+        label: "Jo'natilinyapti"
     },
     {
         _id: 3,
-        label: "Erkaklar uchun"
+        label: "Jo'natildi"
     },
     {
         _id: 4,
-        label: "Uy va ro'zg'or"
-    },
-    {
-        _id: 5,
-        label: "Smartfon va smart soatlar"
-    },
-    {
-        _id: 6,
-        label: "Maishiy texnikalar"
-    },
+        label: "atkaz"
+    }
 ];
 
 const style = {
@@ -53,30 +43,28 @@ const style = {
 
 export default function AddModal({ open, handleModal, order}) {
    const dispatch = useDispatch();
-   const isLoading = useSelector(state=>state.order.isLoading);
+   const isLoading = useSelector(state=>state.updateOrder.isLoading);
 
     const { handleChange, values, errors, touched, handleSubmit, setFieldValue } = useFormik({
         initialValues: {
-         name: order?.name,
-         price: order?.price,
-         description: order?.description,
-         category: order?.category,
-         admin: order?.admin,
+         customer_name: order?.customer_name,
+         customer_phone: order?.customer_phone,
+         customer_address: order?.customer_address,
+         status: order?.status,
+         customer_info: '',
         },
         validationSchema: Yup.object({
-          name: Yup.string().required('Mahsulot nomi kiritlishi shart!'),
-          price: Yup.number().required('Mahsulot narxi kiritilishi shart!'),
-          description: Yup.string().required('Mahsulot haqida kiriting!'),
-          category: Yup.number().required('Kategoriya kiritilmadi!'),
-          admin: Yup.number().required('Admin tulovi kiritilmadi!'),
+          customer_name: Yup.string().required('Mijoz ismi kiritilishi shart!'),
+          customer_phone: Yup.string().required('Mahsulot narxi kiritilishi shart!'),
+          customer_address: Yup.string().required('Mijoz manzilini kiriting kiriting!'),
+          status: Yup.string().required('Holatini kiriting!'),
         }),
         onSubmit: (values) => {
-            dispatch(postOrder({
+            dispatch(updateOrder({
                 ...order,
                 ...values,
             }));
             handleModal(false);
-            dispatch(getProducts());
         }
       });
    
@@ -100,7 +88,7 @@ export default function AddModal({ open, handleModal, order}) {
         }}
       >
         <Box sx={style}>
-          <Typography variant="h5" sx={{margin: '15px 0'}}>Mahsulotni tahrirlash</Typography>
+          <Typography variant="h5" sx={{margin: '15px 0'}}>Buyurtmani tahrirlash</Typography>
         <form
         autoComplete="off"
         noValidate
@@ -115,14 +103,14 @@ export default function AddModal({ open, handleModal, order}) {
                 >
                 <TextField
                     fullWidth
-                    label="Mahsulot nomi"
-                    name="name"
+                    label="Mijoz ismi"
+                    name="customer_name"
                     onChange={handleChange}
                     required
-                    value={values.name}
+                    value={values.customer_name}
                     variant="outlined"
-                    error={Boolean(touched.name && errors.name)}
-                    helperText={touched.name && errors.name}
+                    error={Boolean(touched.customer_name && errors.customer_name)}
+                    helperText={touched.customer_name && errors.customer_name}
                 />
                 </Grid>
                 <Grid
@@ -131,16 +119,14 @@ export default function AddModal({ open, handleModal, order}) {
                 >
                 <TextField
                     fullWidth
-                    label="Mahsulot haqida"
-                    name="description"
+                    label="Manzili"
+                    name="customer_address"
                     onChange={handleChange}
                     required
-                    value={values.description}
+                    value={values.customer_address}
                     variant="outlined"
-                    error={Boolean(touched.description && errors.description)}
-                    helperText={touched.description && errors.description}
-                    multiline
-                    rows={6}
+                    error={Boolean(touched.customer_address && errors.customer_address)}
+                    helperText={touched.customer_address && errors.description}
                 />
                 </Grid>
                 <Grid
@@ -149,32 +135,14 @@ export default function AddModal({ open, handleModal, order}) {
                 >
                 <TextField
                     fullWidth
-                    label="Mahsulot narxi"
-                    name="price"
+                    label="Telefon"
+                    name="customer_phone"
                     onChange={handleChange}
                     required
-                    type='number'
-                    value={values.price}
+                    value={values.customer_phone}
                     variant="outlined"
-                    error={Boolean(touched.price && errors.price)}
-                    helperText={touched.price && errors.price}
-                />
-                </Grid>
-                <Grid
-                item
-                xs={12}
-                >
-                <TextField
-                    fullWidth
-                    label="Admin to'lovi"
-                    name="admin"
-                    onChange={handleChange}
-                    type='number'
-                    required
-                    value={values.admin}
-                    variant="outlined"
-                    error={Boolean(touched.admin && errors.admin)}
-                    helperText={touched.admin && errors.admin}
+                    error={Boolean(touched.customer_phone && errors.customer_phone)}
+                    helperText={touched.customer_phone && errors.customer_phone}
                 />
                 </Grid>
                 <Grid
@@ -182,13 +150,13 @@ export default function AddModal({ open, handleModal, order}) {
                 xs={12}
                 >
                 <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Mahulot kategoriyasi</InputLabel>
+                    <InputLabel id="demo-simple-select-label">Holati</InputLabel>
                     <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={values?.category}
-                    label="Mahulot kategoriyasi"
-                    onChange={(e)=>setFieldValue('category', e.target.value)}
+                    value={values.status}
+                    label="Holati"
+                    onChange={(e)=>setFieldValue('status', e.target.value)}
                     >
                     {
                      statuses?.map((item)=>
@@ -197,6 +165,23 @@ export default function AddModal({ open, handleModal, order}) {
                     }
                     </Select>
                 </FormControl>
+                </Grid>
+                <Grid
+                item
+                xs={12}
+                >
+                <TextField
+                    fullWidth
+                    label="Qo'shimcha malumotlar"
+                    name="customer_info"
+                    onChange={handleChange}
+                    value={values.customer_info}
+                    variant="outlined"
+                    error={Boolean(touched.customer_info && errors.customer_info)}
+                    helperText={touched.customer_info && errors.customer_info}
+                    multiline
+                    rows={3}
+                />
                 </Grid>
             </Grid>
             <Divider />
