@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { updateOrder }  from '../../redux/order-redux/update';
+import updateStatus from '../../utils/changeStatus';
 
 const statuses = [
     {
@@ -19,17 +20,25 @@ const statuses = [
         label: 'yangi'
     },
     {
+        _id: 5,
+        label: "Dastafkaga tayyor"
+    },
+    {
         _id: 2,
-        label: "Jo'natilinyapti"
+        label: "Yetkazilmoqda"
     },
     {
         _id: 3,
-        label: "Jo'natildi"
+        label: "Yetkazildi"
     },
     {
         _id: 4,
-        label: "atkaz"
-    }
+        label: "Atkaz"
+    },
+    {
+        _id: 6,
+        label: "Keyin oladi"
+    },
 ];
 
 const style = {
@@ -39,6 +48,25 @@ const style = {
   boxShadow: 24,
   p: {xs: 1, lg: 4},
   overflowY: 'auto',
+};
+
+const getstatus = (idx)=>{
+    switch (idx) {
+        case 1:
+            return 'new';
+        case 2:
+            return 'onway';
+        case 3:
+            return 'delivered';
+        case 4:    
+            return 'canceled';
+        case 5:
+            return 'ready';
+        case 6:
+            return 'hold';
+        default:
+            return '';
+    }
 };
 
 export default function AddModal({ open, handleModal, order}) {
@@ -52,6 +80,7 @@ export default function AddModal({ open, handleModal, order}) {
          customer_address: order?.customer_address,
          status: order?.status,
          customer_info: '',
+         message: ''
         },
         validationSchema: Yup.object({
           customer_name: Yup.string().required('Mijoz ismi kiritilishi shart!'),
@@ -60,6 +89,11 @@ export default function AddModal({ open, handleModal, order}) {
           status: Yup.string().required('Holatini kiriting!'),
         }),
         onSubmit: (values) => {
+            const prs = getstatus(order?.status);
+            const nxs = getstatus(parseInt(values?.status));
+            if(order?.streamID&&prs!==nxs){
+                updateStatus(order?.streamID, prs, nxs);
+            }
             dispatch(updateOrder({
                 ...order,
                 ...values,
@@ -179,6 +213,23 @@ export default function AddModal({ open, handleModal, order}) {
                     variant="outlined"
                     error={Boolean(touched.customer_info && errors.customer_info)}
                     helperText={touched.customer_info && errors.customer_info}
+                    multiline
+                    rows={3}
+                />
+                </Grid>
+                <Grid
+                item
+                xs={12}
+                >
+                <TextField
+                    fullWidth
+                    label="Admin uchun izoh"
+                    name="message"
+                    onChange={handleChange}
+                    value={values.message}
+                    variant="outlined"
+                    error={Boolean(touched.message && errors.message)}
+                    helperText={touched.message && errors.message}
                     multiline
                     rows={3}
                 />

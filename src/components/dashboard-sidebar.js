@@ -9,6 +9,7 @@ import { User as UserIcon } from '../icons/user';
 import { Users as UsersIcon } from '../icons/users';
 import HomeIcon from '@mui/icons-material/Home';
 import { NavItem } from './nav-item';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 const items = [
   {
@@ -22,11 +23,6 @@ const items = [
     title: 'Buyurtmalar'
   },
   {
-    href: '/customers',
-    icon: (<UsersIcon fontSize="small" />),
-    title: 'Mijozlar'
-  },
-  {
     href: '/telegram-admins',
     icon: (<UsersIcon fontSize="small" />),
     title: 'Adminlar'
@@ -37,11 +33,15 @@ const items = [
     title: 'Mahsulotlar'
   },
   {
+    href: '/payment',
+    icon: (<AttachMoneyIcon fontSize="small" />),
+    title: "To'lov"
+  },
+  {
     href: '/account',
     icon: (<UserIcon fontSize="small" />),
     title: 'Profil'
   },
-  
 ];
 
 export const DashboardSidebar = (props) => {

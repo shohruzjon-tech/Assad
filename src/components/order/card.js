@@ -5,22 +5,47 @@ import { useState } from 'react';
 import { doc, deleteDoc, setDoc } from "firebase/firestore";
 import { db } from '../../services/firebase';
 import { toast } from 'react-toastify';
+import format from 'date-fns/format';
+import { archiveFile, removeFile } from '../../utils/changeStatus';
 
+const getstatus = (idx)=>{
+  switch (idx) {
+      case 1:
+          return 'new';
+      case 2:
+          return 'onway';
+      case 3:
+          return 'delivered';
+      case 4:    
+          return 'canceled';
+      case 5:
+          return 'ready';
+      case 6:
+          return 'hold';
+      default:
+          return '';
+  }
+};
 
 export const OrderCard = ({ order, ...rest }) => {
   
   const [editModal, setEdit] = useState(false);
 
   const archiveOrders = async ()=>{
+    const status = getstatus(order?.status);
     toast.promise(
+      Promise.all([
       setDoc(doc(db, "order-archive", order?.order_id), order),
+      archiveFile(order?.streamID),
+      deleteDoc(doc(db, "orders-list", order?.order_id)),
+      removeFile(order?.streamID, status)
+      ]),
       {
         pending: "Arxivlanyapti...",
         success: "Arxivlandi",
         error: 'Jarayon bekor qilindi',
       }
     );
-    await deleteDoc(doc(db, "orders-list", order?.order_id));
   };
   
   return (
@@ -33,6 +58,25 @@ export const OrderCard = ({ order, ...rest }) => {
     {...rest}
   >
     <CardContent>
+    <Stack direction='row' alignItems='center' justifyContent='space-between'>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="body1"
+      >
+        Vaqti
+      </Typography>
+      <Typography
+        align="center"
+        color="textPrimary"
+        gutterBottom
+        variant="h6"
+        sx={{color: 'red'}}
+      >
+        {format(new Date(order?.createdAt.seconds*1000), 'yyyy-MM-dd HH:ss')}
+      </Typography>
+      </Stack>
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
       <Typography
         align="center"

@@ -107,6 +107,13 @@ export const theme = createTheme({
         }
       }
     },
+    MuiBottomNavigationAction:{
+       styleOverrides:{
+        root:{
+          width: '200px'
+        }
+       }
+    },
     MuiTableHead: {
       styleOverrides: {
         root: {

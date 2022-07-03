@@ -8,8 +8,8 @@ import { useEffect, useState } from 'react';
 import GlobalLoader from '../../components/global-loader';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
-import BottomNavigation from '@mui/material/BottomNavigation';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 const Orders = () => {
   const router = useRouter()
@@ -51,19 +51,19 @@ const Orders = () => {
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8
+        py: 1
       }}
     >
-      <Box sx={{ width: '100%' }}>
-      <BottomNavigation
-        showLabels
-      >
-        <BottomNavigationAction label="Barchasi" sx={{color: 'green'}} onClick={()=>router.push('/orders')}/>
-        <BottomNavigationAction label="yangi" sx={{color: 'green'}} onClick={()=>router.push('/orders/1')}/>
-        <BottomNavigationAction label="Tayyorlanyapti" sx={{color: 'green'}} onClick={()=>router.push('/orders/2')}/>
-        <BottomNavigationAction label="Jo'natildi" sx={{color: 'green'}} onClick={()=>router.push('/orders/3')}/>
-        <BottomNavigationAction label="Atkaz" sx={{color: 'green'}} onClick={()=>router.push('/orders/4')}/>
-      </BottomNavigation>
+      <Box sx={{width: '100%', overflowX: 'auto', padding: '20px 0', '&::--webkit-scrollbar':{display: 'none'}, }}>
+      <ButtonGroup variant="contained" aria-label="outlined primary button group">
+      <Button sx={{ml: 2, borderRadius: '50px', width: '120px'}} color='success' onClick={()=>router.push('/orders')}>BARCHASI</Button>
+      <Button sx={{ml: 2, borderRadius: '50px', width: '120px'}} color='primary' onClick={()=>router.push('/orders/1')}>YANGI</Button>
+      <Button sx={{ml: 2, borderRadius: '50px', width: '120px'}} color='primary' onClick={()=>router.push('/orders/5')}>DASTAFKAGA TAYYOR</Button>
+      <Button sx={{ml: 2, borderRadius: '50px', width: '120px'}} color='warning' onClick={()=>router.push('/orders/2')}>YETKAZILMOQDA</Button>
+      <Button sx={{ml: 2, borderRadius: '50px', width: '120px'}} color='secondary' onClick={()=>router.push('/orders/3')}>YETKAZILDI</Button>
+      <Button sx={{ml: 2, borderRadius: '50px', width: '120px'}} color='success'  onClick={()=>router.push('/orders/6')}>KEYIN OLADI</Button>
+      <Button sx={{ml: 2, borderRadius: '50px', width: '120px'}} color='error' onClick={()=>router.push('/orders/4')}>ATKAZ</Button>
+    </ButtonGroup>
     </Box>
       <Container maxWidth={false}>
         <Box sx={{ pt: 3 }}>
