@@ -14,6 +14,7 @@ import Select from '@mui/material/Select';
 import { updateOrder }  from '../../redux/order-redux/update';
 import updateStatus from '../../utils/changeStatus';
 import { updateBalanceAsync } from 'src/redux/balance/saga.slice';
+import { updateRequestAsync } from 'src/redux/requests/request.slice';
 
 const statuses = [
     {
@@ -70,6 +71,25 @@ const getstatus = (idx)=>{
     }
 };
 
+const getstat = (idx)=>{
+    switch (idx) {
+        case 1:
+            return 'yangi';
+        case 2:
+            return 'Yetkazilyapti';
+        case 3:
+            return 'Yetkazildi';
+        case 4:    
+            return 'Atkaz';
+        case 5:
+            return 'Tayyor';
+        case 6:
+            return 'Keyin oladi';
+        default:
+            return '';
+    }
+};
+
 export default function AddModal({ open, handleModal, order}) {
    const dispatch = useDispatch();
    const isLoading = useSelector(state=>state.updateOrder.isLoading);
@@ -92,14 +112,24 @@ export default function AddModal({ open, handleModal, order}) {
         onSubmit: (values) => {
             const prs = getstatus(order?.status);
             const nxs = getstatus(parseInt(values?.status));
+            const nxsU = getstat(parseInt(values?.status));
             if(order?.streamID&&prs!==nxs){
                 updateStatus(order?.streamID, prs, nxs);
                 if(nxs==='delivered'){
                     dispatch(updateBalanceAsync({
                         _id: order?.streamID,
-                        amount:  order?.product_admin
+                        amount:  order?.product_admin,
                     }));
                 }
+                dispatch(updateRequestAsync({
+                    _id: order?.order_id,
+                    createdAt: new Date(),
+                    customer: order?.customer_name,
+                    message: values?.message,
+                    status: nxsU,
+                    stream: order?.streamID,
+                    address: values.customer_address
+                }))
             }
             dispatch(updateOrder({
                 ...order,
