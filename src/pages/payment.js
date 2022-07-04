@@ -1,23 +1,42 @@
 import Head from 'next/head';
-import { Box, Container, Grid } from '@mui/material';
-import { ProductListToolbar } from '../components/product/product-list-toolbar';
-import { ProductCard } from '../components/product/product-card';
+import React, { useState, useEffect } from 'react';
+import { Box, Container, Typography } from '@mui/material';
 import { DashboardLayout } from '../components/dashboard-layout';
-import { useSelector, useDispatch }  from 'react-redux';
-import { useEffect } from 'react';
-import { getProducts } from '../redux/product-redux/product.slice';
 import GlobalLoader from '../components/global-loader';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import PaymentRow from '../components/payment/row';
+import { db } from '../services/firebase';
+import { collection, onSnapshot } from "firebase/firestore";
+import { toast } from 'react-toastify';
 
 const Products = () => {
-  const dispatch = useDispatch();
-  const products = useSelector((state)=>state.product.products);
-  const isLoading = useSelector(state=>state.product.isLoading);
+  const [reqList, setList] = useState([]);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(()=>{
-    dispatch(getProducts());
-   }, [dispatch])
+    setLoading(true);
+    const unsubscribe = onSnapshot(collection(db, "payment-requests"), (snapshot) => {
+         const arr=[];
+         snapshot.forEach(doc=>{
+          arr.push(doc.data());
+         });
+         setList(arr);
+         setLoading(false);
+    }, (error)=>{
+         toast.error('Malumotni yuklab bulmadi!')
+         setLoading(false);
+    });
+
+    return ()=>unsubscribe();
+  }, [db]);
   
-  if(isLoading) return <GlobalLoader/>
+  if(isLoading) return <GlobalLoader/>;
 
   return (
   <>
@@ -30,37 +49,32 @@ const Products = () => {
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8
+        py: 4
       }}
     >
       <Container maxWidth={false}>
-        <ProductListToolbar />
-        <Box sx={{ pt: 3 }}>
-          <Grid
-            container
-            spacing={3}
-          >
-            {products.map((product) => (
-              <Grid
-                item
-                key={product._id}
-                lg={4}
-                md={6}
-                xs={12}
-              >
-                <ProductCard product={product} />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            pt: 3
-          }}
-        >
-        </Box>
+        <Typography variant='h5' sx={{py: 2}}>To'lov uchun so'rovlar</Typography>
+      <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell align='right'>ID</TableCell>
+            <TableCell align="center">KARTA</TableCell>
+            <TableCell align="center">SUMMA</TableCell>
+            <TableCell align="center">ADMIN</TableCell>
+            <TableCell align="center">ASOSIY BALANS</TableCell>
+            <TableCell align="center">TO'LANGAN SO'MMA</TableCell>
+            <TableCell align="center">HOLATI</TableCell>
+            <TableCell align="center">HABAR</TableCell>
+            <TableCell align="center">SANA</TableCell>
+            <TableCell align="center">TAHRIR</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {reqList?.map((row, indx) => (<PaymentRow {...row} indx={indx} key={indx}/>))}
+        </TableBody>
+      </Table>
+    </TableContainer>
       </Container>
     </Box>
   </>)

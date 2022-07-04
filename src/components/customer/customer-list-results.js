@@ -12,13 +12,15 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
+  Button
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import { db } from '../../services/firebase';
 import { collection, onSnapshot } from "firebase/firestore";
 import GlobalLoader from '../global-loader';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 export const CustomerListResults = ({ ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
@@ -29,6 +31,7 @@ export const CustomerListResults = ({ ...rest }) => {
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
+
 
     if (event.target.checked) {
       newSelectedCustomerIds = admins.map((customer) => customer._id);
@@ -83,7 +86,9 @@ export const CustomerListResults = ({ ...rest }) => {
       toast.error('Xatolik yuzberdi!')
     });
    return ()=>unsubscribe();
-  }, [db])
+  }, [db]);
+
+  const router = useRouter();
 
   if(isLoading) return <GlobalLoader/>
 
@@ -106,19 +111,22 @@ export const CustomerListResults = ({ ...rest }) => {
                   />
                 </TableCell>
                 <TableCell>
-                  Ism
+                  ISM VA FAMILIYA
                 </TableCell>
                 <TableCell>
-                  Elektron pochta
+                  MANZIL
                 </TableCell>
                 <TableCell>
-                  Manzil
+                  TELEFON RAQAM
                 </TableCell>
                 <TableCell>
-                  Telefon raqam
+                  ASOSIY BALANS
                 </TableCell>
                 <TableCell>
-                  Maxfiy kalit
+                  JAMI TO'LANGAN
+                </TableCell>
+                <TableCell>
+                
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -144,7 +152,7 @@ export const CustomerListResults = ({ ...rest }) => {
                       }}
                     >
                       <Avatar
-                        src={customer.avatarUrl}
+                        src={customer.avatar}
                         sx={{ mr: 2 }}
                       >
                         {getInitials(customer.name)}
@@ -153,21 +161,25 @@ export const CustomerListResults = ({ ...rest }) => {
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.name}
+                        {customer.name}{'  '}
+                        {customer.surname}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {customer.email}
+                  {`${customer?.city}, ${customer.region}`}
                   </TableCell>
                   <TableCell>
-                    {`${customer.city}, ${customer.region}`}
+                   {customer.phone}
                   </TableCell>
                   <TableCell>
-                    {customer.phone}
+                    {customer.balance}
                   </TableCell>
                   <TableCell>
-                    {customer.password}
+                    {customer.paid}
+                  </TableCell>
+                  <TableCell>
+                    <Button onClick={(()=>router.push(`/telegram-admins/${customer?._id}`))} variant='contained'>PROFIL</Button>
                   </TableCell>
                 </TableRow>
               ))}

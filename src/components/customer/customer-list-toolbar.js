@@ -35,13 +35,6 @@ export const CustomerListToolbar = (props) => {
       </Typography>
       <AdminModal open={modal} handleModal={setAdmin}/>
       <Box sx={{ m: 1 }}>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={()=>setAdmin(!modal)}
-        >
-          Admin qo'shish
-        </Button>
       </Box>
     </Box>
     <Box sx={{ mt: 3 }}>

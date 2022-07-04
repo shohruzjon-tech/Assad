@@ -49,7 +49,6 @@ export default function AddModal({ open, handleModal }) {
             _id: Date.now().toString(),
             images: imagesList,
           }));
-
           dispatch(getProducts());
         }
       });
