@@ -13,6 +13,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { updateOrder }  from '../../redux/order-redux/update';
 import updateStatus from '../../utils/changeStatus';
+import { updateBalanceAsync } from 'src/redux/balance/saga.slice';
 
 const statuses = [
     {
@@ -93,6 +94,12 @@ export default function AddModal({ open, handleModal, order}) {
             const nxs = getstatus(parseInt(values?.status));
             if(order?.streamID&&prs!==nxs){
                 updateStatus(order?.streamID, prs, nxs);
+                if(nxs==='delivered'){
+                    dispatch(updateBalanceAsync({
+                        _id: order?.streamID,
+                        amount:  order?.product_admin
+                    }));
+                }
             }
             dispatch(updateOrder({
                 ...order,
