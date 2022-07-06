@@ -7,6 +7,7 @@ import { db } from '../../services/firebase';
 import { toast } from 'react-toastify';
 import format from 'date-fns/format';
 import { archiveFile, removeFile } from '../../utils/changeStatus';
+import { useRouter } from 'next/router';
 
 const getstatus = (idx)=>{
   switch (idx) {
@@ -29,6 +30,7 @@ const getstatus = (idx)=>{
 
 export const OrderCard = ({ order, ...rest }) => {
   
+  const router = useRouter();
   const [editModal, setEdit] = useState(false);
 
   const archiveOrders = async ()=>{
@@ -47,6 +49,15 @@ export const OrderCard = ({ order, ...rest }) => {
       }
     );
   };
+
+  const handleStat = ()=>{
+    if(order?.streamID){
+      router.push(`/order-stat/${order?.streamID}`);
+      return;
+    }else{
+      toast.warning('Ushbu buyurtma admindan emas!')
+    }
+  }
   
   return (
   <Card
@@ -224,6 +235,15 @@ export const OrderCard = ({ order, ...rest }) => {
           }}
         >
          <Button onClick={archiveOrders} variant='contained' color='warning'>Arxivlash</Button>
+        </Grid>
+        <Grid
+          item
+          sx={{
+            alignItems: 'center',
+            display: 'flex'
+          }}
+        >
+         <Button onClick={handleStat} variant='contained'>Statistika</Button>
         </Grid>
       </Grid>
     </Box>

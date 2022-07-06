@@ -5,6 +5,7 @@ import userReducer from './user-redux/user.slice';
 import orderReducer from './order-redux/order.slice';
 import productReducer from './product-redux/product.slice';
 import updateOrderReducer from './order-redux/update';
+import adminStatReducer from "./order-redux/admin.info.slice";
 
 const persistConfig = {
   key: "root",
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
     order: orderReducer,
     product: productReducer,
     updateOrder: updateOrderReducer,
+    adminStat: adminStatReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);
