@@ -20,7 +20,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import format from "date-fns/format";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useFormik } from 'formik';
-import ReactQuill from 'react-quill';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -121,12 +120,7 @@ const ConcursePage = () =>{
                     />
                   </Stack>
                   <Stack mt={3}>
-                   <ReactQuill
-                     placeholder='Konkurs haqida'
-                     value={formik.values.description||''}
-                     name='description'
-                     onChange={(value)=>formik.setFieldValue('description', value)}
-                   />
+                   <TextField/>
                   </Stack>
                   <Stack mt={3}>
                     <TextField
