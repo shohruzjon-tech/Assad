@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import NextLink from 'next/link';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Box, Divider, Drawer, useMediaQuery } from '@mui/material';
@@ -31,6 +31,11 @@ const items = [
     href: '/products',
     icon: (<ShoppingBagIcon fontSize="small" />),
     title: 'Mahsulotlar'
+  },
+  {
+    href: '/competetion',
+    icon: (<CardGiftcardIcon fontSize="small" />),
+    title: 'Konkurs'
   },
   {
     href: '/payment',
