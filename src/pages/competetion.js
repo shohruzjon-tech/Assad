@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import 'react-quill/dist/quill.snow.css';
 import { DashboardLayout } from '../components/dashboard-layout';
 import React, { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
