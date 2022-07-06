@@ -10,6 +10,7 @@ import { Users as UsersIcon } from '../icons/users';
 import HomeIcon from '@mui/icons-material/Home';
 import { NavItem } from './nav-item';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import ArchiveIcon from '@mui/icons-material/Archive';
 
 const items = [
   {
@@ -21,6 +22,11 @@ const items = [
     href: '/orders',
     icon: (<ChartBarIcon fontSize="small" />),
     title: 'Buyurtmalar'
+  },
+  {
+    href: '/archives',
+    icon: (<ArchiveIcon fontSize="small" />),
+    title: 'Buyurtmalar Arxivi'
   },
   {
     href: '/telegram-admins',
